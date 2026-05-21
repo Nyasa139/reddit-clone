@@ -1,5 +1,4 @@
 
-```markdown
 # 🌐 Reddit-Clone MVP
 
 A high-performance, visually stunning, full-stack Reddit clone built with **Next.js 16 (App Router)**, **React 19**, **Prisma**, **NextAuth**, and **Tailwind CSS**. Featuring community creation, posts with upvoting/downvoting dynamics, nested replies/comments, and an interactive real-time notification center.
