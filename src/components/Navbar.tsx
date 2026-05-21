@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Search, Plus } from "lucide-react"
+import { Search, Plus, Bell } from "lucide-react"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import UserAccountNav from "./UserAccountNav"
@@ -42,6 +42,10 @@ const Navbar = async () => {
                 <Plus className="h-4 w-4" />
                 Create Community
               </Link>
+              <button className="p-2 hover:bg-slate-800 rounded-full transition-colors relative">
+                <Bell className="h-5 w-5 text-slate-300" />
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 border border-slate-900"></span>
+              </button>
               <UserAccountNav user={session.user} />
             </>
           ) : (
