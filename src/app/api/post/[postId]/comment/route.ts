@@ -32,6 +32,17 @@ export async function POST(req: Request, props: { params: Promise<{ postId: stri
       }
     })
 
+    if (post.authorId !== session.user.id) {
+      await prisma.notification.create({
+        data: {
+          userId: post.authorId,
+          creatorId: session.user.id,
+          type: "COMMENT",
+          postId: post.id
+        }
+      })
+    }
+
     return NextResponse.json(comment, { status: 201 })
   } catch (error) {
     return NextResponse.json({ message: "Something went wrong" }, { status: 500 })

@@ -15,6 +15,8 @@ model User {
   posts     Post[]
   comments  Comment[]
   votes     Vote[]
+  notifications        Notification[] @relation("UserNotifications")
+  createdNotifications Notification[] @relation("CreatorNotifications")
 }
 
 model Community {
@@ -36,6 +38,7 @@ model Post {
   authorId    String
   comments    Comment[]
   votes       Vote[]
+  notifications Notification[]
   createdAt   DateTime  @default(now())
 }
 
@@ -58,4 +61,17 @@ model Vote {
   postId  String
 
   @@unique([userId, postId]) // A user can only vote once per post
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   // The user receiving the notification
+  user      User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  creatorId String   // The user who triggered the notification
+  creator   User     @relation("CreatorNotifications", fields: [creatorId], references: [id], onDelete: Cascade)
+  type      String   // "COMMENT" or "UPVOTE"
+  postId    String?  // The post associated with the notification (optional)
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

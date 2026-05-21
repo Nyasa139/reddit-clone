@@ -67,6 +67,16 @@ export async function PATCH(req: Request, props: { params: Promise<{ postId: str
           postId: params.postId
         }
       })
+      if (type === "UP" && post.authorId !== session.user.id) {
+        await prisma.notification.create({
+          data: {
+            userId: post.authorId,
+            creatorId: session.user.id,
+            type: "UPVOTE",
+            postId: post.id
+          }
+        })
+      }
       return NextResponse.json({ previousVote: null, newVote: type })
     }
   } catch (error) {
