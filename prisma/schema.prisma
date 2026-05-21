@@ -39,6 +39,7 @@ model Post {
   comments    Comment[]
   votes       Vote[]
   notifications Notification[]
+  score       Int       @default(0)
   createdAt   DateTime  @default(now())
 }
 
@@ -49,6 +50,9 @@ model Comment {
   postId    String
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  String
+  replyToId String?
+  replyTo   Comment?  @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  replies   Comment[] @relation("ReplyTo")
   createdAt DateTime @default(now())
 }
 

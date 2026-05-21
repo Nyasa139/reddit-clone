@@ -44,6 +44,10 @@ export async function PATCH(req: Request, props: { params: Promise<{ postId: str
             }
           }
         })
+        await prisma.post.update({
+          where: { id: params.postId },
+          data: { score: { increment: type === "UP" ? -1 : 1 } }
+        })
         return NextResponse.json({ previousVote: existingVote.type, newVote: null })
       } else {
         // User changed their vote
@@ -56,6 +60,10 @@ export async function PATCH(req: Request, props: { params: Promise<{ postId: str
           },
           data: { type }
         })
+        await prisma.post.update({
+          where: { id: params.postId },
+          data: { score: { increment: type === "UP" ? 2 : -2 } }
+        })
         return NextResponse.json({ previousVote: existingVote.type, newVote: type })
       }
     } else {
@@ -66,6 +74,10 @@ export async function PATCH(req: Request, props: { params: Promise<{ postId: str
           userId: session.user.id,
           postId: params.postId
         }
+      })
+      await prisma.post.update({
+        where: { id: params.postId },
+        data: { score: { increment: type === "UP" ? 1 : -1 } }
       })
       if (type === "UP" && post.authorId !== session.user.id) {
         await prisma.notification.create({
