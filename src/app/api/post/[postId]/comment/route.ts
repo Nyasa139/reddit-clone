@@ -11,7 +11,7 @@ export async function POST(req: Request, props: { params: Promise<{ postId: stri
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const { content } = await req.json()
+    const { content, replyToId } = await req.json()
     if (!content) {
       return NextResponse.json({ message: "Content is required" }, { status: 400 })
     }
@@ -28,7 +28,8 @@ export async function POST(req: Request, props: { params: Promise<{ postId: stri
       data: {
         content,
         postId: post.id,
-        authorId: session.user.id
+        authorId: session.user.id,
+        replyToId: replyToId || null
       }
     })
 

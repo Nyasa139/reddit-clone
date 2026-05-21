@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
-export default function CommentForm({ postId }: { postId: string }) {
+export default function CommentForm({ postId, replyToId, onSuccess }: { postId: string, replyToId?: string, onSuccess?: () => void }) {
   const [content, setContent] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -18,13 +18,14 @@ export default function CommentForm({ postId }: { postId: string }) {
       const res = await fetch(`/api/post/${postId}/comment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, replyToId }),
       })
       
       const data = await res.json()
       if (!res.ok) throw new Error(data.message || "Failed to add comment")
 
       setContent("")
+      if (onSuccess) onSuccess()
       router.refresh()
     } catch (err: any) {
       setError(err.message)

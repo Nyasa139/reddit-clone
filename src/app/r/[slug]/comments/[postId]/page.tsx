@@ -6,6 +6,7 @@ import Link from "next/link"
 import PostVoteClient from "@/components/PostVoteClient"
 
 import CommentForm from "@/components/CommentForm"
+import CommentItem from "@/components/CommentItem"
 
 export const dynamic = "force-dynamic"
 
@@ -70,20 +71,28 @@ export default async function PostDetailPage(props: { params: Promise<{ slug: st
         <div className="glass-panel rounded-xl p-6 shadow-xl mt-4">
           <CommentForm postId={post.id} />
           
-          <div className="space-y-4">
+          <div className="space-y-2 mt-6">
             {post.comments.length === 0 ? (
               <p className="text-sm text-slate-500">No comments yet. Be the first to share what you think!</p>
             ) : (
-              post.comments.map(comment => (
-                <div key={comment.id} className="flex flex-col gap-1 text-sm border-b border-slate-800 pb-3">
-                  <div className="flex items-center gap-2 text-xs text-slate-400">
-                    <span className="font-bold text-slate-200">u/{comment.author.username}</span>
-                    <span>•</span>
-                    <span>{formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}</span>
-                  </div>
-                  <p className="text-slate-200 mt-1 whitespace-pre-wrap">{comment.content}</p>
-                </div>
-              ))
+              (() => {
+                const commentMap = new Map()
+                post.comments.forEach(c => commentMap.set(c.id, { ...c, children: [] }))
+                
+                const rootComments: any[] = []
+                post.comments.forEach(c => {
+                  if (c.replyToId) {
+                    const parent = commentMap.get(c.replyToId)
+                    if (parent) parent.children.push(commentMap.get(c.id))
+                  } else {
+                    rootComments.push(commentMap.get(c.id))
+                  }
+                })
+
+                return rootComments.map(comment => (
+                  <CommentItem key={comment.id} comment={comment} postId={post.id} />
+                ))
+              })()
             )}
           </div>
         </div>
